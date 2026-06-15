@@ -22,18 +22,17 @@
 
     <div class="app-container flex flex-col h-screen overflow-hidden">
         
-        <!-- Header (iOS Style) -->
+        <!-- Header -->
         <header class="ios-blur pt-safe border-b border-gray-200/50 sticky top-0 z-30 px-4 py-3 flex justify-between items-center">
             <div class="text-[10px] bg-gray-200/80 text-gray-600 px-2 py-1 rounded-md font-medium flex items-center" id="admin-status">
                 <div class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-1.5 animate-pulse"></div>Offline
             </div>
-            <h1 class="text-[17px] font-semibold tracking-tight text-black absolute left-1/2 transform -translate-x-1/2">Admin</h1>
+            <h1 class="text-[17px] font-semibold tracking-tight text-black absolute left-1/2 transform -translate-x-1/2">Admin Ay&</h1>
             <div class="w-[60px]"></div> <!-- Spacer -->
         </header>
 
         <main class="flex-1 overflow-y-auto pb-safe relative px-4 pt-4">
             
-            <!-- Toast UI -->
             <div id="admin-toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 ios-blur border border-gray-200/50 text-gray-800 px-5 py-2.5 rounded-full shadow-lg transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center text-[14px] font-medium whitespace-nowrap">
                 <span id="toast-msg">Notifikasi</span>
             </div>
@@ -42,11 +41,9 @@
             <section id="view-orders" class="block w-full">
                 <div class="flex justify-between items-end mb-4 px-1">
                     <h2 class="text-[28px] font-bold tracking-tight text-black">Pesanan</h2>
-                    <button onclick="loadAdminOrders()" class="text-amber-600 mb-1.5 active:opacity-50 transition-opacity"><i data-lucide="rotate-cw" class="w-5 h-5"></i></button>
                 </div>
-                
                 <div id="admin-orders-list" class="space-y-4">
-                    <div class="text-center py-10 text-gray-400"><i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto mb-2"></i> Memuat data...</div>
+                    <div class="text-center py-20 text-gray-400"><i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto mb-2"></i> Memuat data...</div>
                 </div>
             </section>
 
@@ -56,38 +53,76 @@
                     <h2 class="text-[28px] font-bold tracking-tight text-black">Menu Kopi</h2>
                 </div>
 
-                <!-- Form Tambah Menu -->
                 <div class="bg-white p-4 rounded-[20px] mb-6 shadow-sm border border-gray-100">
-                    <h3 class="font-semibold text-gray-900 text-[15px] mb-3">Tambah Baru</h3>
+                    <h3 class="font-semibold text-gray-900 text-[15px] mb-3 border-b border-gray-100 pb-2">Tambah Baru</h3>
                     <div class="space-y-3">
-                        <input type="text" id="add-nama" placeholder="Nama Kopi" class="w-full bg-gray-100/50 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 text-[15px]">
-                        <input type="number" id="add-harga" placeholder="Harga (Rp)" class="w-full bg-gray-100/50 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 text-[15px]">
-                        <button onclick="addMenuItem()" class="w-full bg-amber-600 active:bg-amber-700 text-white font-semibold py-3 rounded-xl transition-colors text-[15px]">
+                        <input type="text" id="add-img" placeholder="Link URL Gambar (opsional)" class="w-full bg-gray-50 p-3 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500 text-[14px]">
+                        <input type="text" id="add-nama" placeholder="Nama Kopi*" class="w-full bg-gray-50 p-3 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500 text-[14px]">
+                        <div class="flex gap-2">
+                            <input type="number" id="add-harga" placeholder="Harga Jual (Rp)*" class="w-1/2 bg-gray-50 p-3 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500 text-[14px]">
+                            <input type="number" id="add-promo" placeholder="Harga Promo (Rp)" class="w-1/2 bg-gray-50 p-3 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500 text-[14px]">
+                        </div>
+                        <input type="text" id="add-comp" placeholder="Komposisi Kopi (opsional)" class="w-full bg-gray-50 p-3 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500 text-[14px]">
+                        <textarea id="add-desc" placeholder="Catatan/Penjelasan (opsional)" class="w-full bg-gray-50 p-3 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500 text-[14px]" rows="2"></textarea>
+                        
+                        <button onclick="addMenuItem()" class="w-full bg-amber-600 active:bg-amber-700 text-white font-semibold py-3 rounded-xl transition-colors text-[15px] mt-2">
                             Simpan Menu
                         </button>
                     </div>
                 </div>
 
-                <!-- List Menu -->
                 <h3 class="font-semibold text-gray-500 text-[13px] uppercase tracking-wider mb-2 px-2">Daftar Item</h3>
                 <div class="bg-white rounded-[20px] shadow-sm border border-gray-100 overflow-hidden mb-6">
                     <div id="admin-menu-list" class="divide-y divide-gray-100">
-                        <!-- Menu list inserted here -->
                         <div class="text-center py-6 text-gray-400">Memuat...</div>
                     </div>
                 </div>
             </section>
+
+            <!-- VIEW: PENGATURAN -->
+            <section id="view-settings" class="hidden w-full">
+                <div class="mb-4 px-1">
+                    <h2 class="text-[28px] font-bold tracking-tight text-black">Pengaturan</h2>
+                </div>
+
+                <div class="bg-white p-4 rounded-[20px] mb-6 shadow-sm border border-gray-100">
+                    <h3 class="font-semibold text-gray-900 text-[15px] mb-3 border-b border-gray-100 pb-2 flex items-center"><i data-lucide="store" class="w-4 h-4 mr-1.5"></i> Profil Toko</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-[12px] font-semibold text-gray-500 mb-1">Nomor WhatsApp Admin</label>
+                            <input type="tel" id="set-wa" placeholder="Contoh: 0812345678" class="w-full bg-gray-50 p-3 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500 text-[14px]">
+                            <p class="text-[11px] text-gray-400 mt-1">Gunakan format 08.. atau 628.. untuk menerima pesanan.</p>
+                        </div>
+                        <div>
+                            <label class="block text-[12px] font-semibold text-gray-500 mb-1">Lokasi Toko</label>
+                            <textarea id="set-loc" placeholder="Alamat lengkap toko" class="w-full bg-gray-50 p-3 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500 text-[14px]" rows="2"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-[12px] font-semibold text-gray-500 mb-1">Link URL Gambar QRIS</label>
+                            <input type="url" id="set-qr" placeholder="https://..." class="w-full bg-gray-50 p-3 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500 text-[14px]">
+                        </div>
+                        <button onclick="saveSettings()" class="w-full bg-gray-800 active:bg-black text-white font-semibold py-3 rounded-xl transition-colors text-[15px] mt-2">
+                            Simpan Pengaturan
+                        </button>
+                    </div>
+                </div>
+            </section>
+
         </main>
 
         <!-- Bottom Navigation -->
         <nav class="ios-blur border-t border-gray-200/50 fixed bottom-0 w-full max-w-[480px] pb-[calc(env(safe-area-inset-bottom)+10px)] z-20 flex justify-around items-center pt-2 px-2 shadow-none rounded-none">
-            <button onclick="switchAdminTab('orders')" id="tab-orders" class="flex flex-col items-center p-2 text-amber-600 transition-colors w-1/2">
+            <button onclick="switchAdminTab('orders')" id="tab-orders" class="flex flex-col items-center p-2 text-amber-600 transition-colors w-1/3">
                 <i data-lucide="bell" class="w-6 h-6 mb-1 stroke-[1.5]"></i>
                 <span class="text-[10px] font-medium tracking-wide">Pesanan</span>
             </button>
-            <button onclick="switchAdminTab('menu')" id="tab-menu" class="flex flex-col items-center p-2 text-gray-400 hover:text-amber-600 transition-colors w-1/2">
+            <button onclick="switchAdminTab('menu')" id="tab-menu" class="flex flex-col items-center p-2 text-gray-400 hover:text-amber-600 transition-colors w-1/3">
                 <i data-lucide="layout-grid" class="w-6 h-6 mb-1 stroke-[1.5]"></i>
                 <span class="text-[10px] font-medium tracking-wide">Menu</span>
+            </button>
+            <button onclick="switchAdminTab('settings')" id="tab-settings" class="flex flex-col items-center p-2 text-gray-400 hover:text-amber-600 transition-colors w-1/3">
+                <i data-lucide="settings" class="w-6 h-6 mb-1 stroke-[1.5]"></i>
+                <span class="text-[10px] font-medium tracking-wide">Setelan</span>
             </button>
         </nav>
     </div>
@@ -95,7 +130,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBBLCeuWhOiOCPV7lWfbW4eSsjwbUmb3c8",
@@ -110,15 +145,12 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         
-        // Gunakan ID statis yang sama dengan aplikasi kustomer
         const sysAppId = 'ay-coffee-shared-db';
         let adminUser = null;
         let allOrders = [];
         let allMenu = [];
 
         lucide.createIcons();
-
-        // Utils
         const formatIDR = (num) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
         
         const showToast = (msg) => {
@@ -133,23 +165,17 @@
         };
 
         window.switchAdminTab = (tab) => {
-            document.getElementById('view-orders').classList.add('hidden');
-            document.getElementById('view-menu').classList.add('hidden');
-            document.getElementById('tab-orders').className = "flex flex-col items-center p-2 text-gray-400 hover:text-amber-600 transition-colors w-1/2";
-            document.getElementById('tab-menu').className = "flex flex-col items-center p-2 text-gray-400 hover:text-amber-600 transition-colors w-1/2";
-            
+            ['orders', 'menu', 'settings'].forEach(t => {
+                document.getElementById(`view-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).className = "flex flex-col items-center p-2 text-gray-400 hover:text-amber-600 transition-colors w-1/3";
+            });
             document.getElementById(`view-${tab}`).classList.remove('hidden');
-            document.getElementById(`tab-${tab}`).className = "flex flex-col items-center p-2 text-amber-600 transition-colors w-1/2";
+            document.getElementById(`tab-${tab}`).className = "flex flex-col items-center p-2 text-amber-600 transition-colors w-1/3";
         };
 
-        // Auth
         const initAuth = async () => {
-            try {
-                await signInAnonymously(auth);
-            } catch (err) {
-                document.getElementById('admin-status').textContent = "Error Koneksi";
-                document.getElementById('admin-status').classList.add('bg-red-900', 'text-red-200');
-            }
+            try { await signInAnonymously(auth); } 
+            catch (err) { document.getElementById('admin-status').innerHTML = `<div class="w-1.5 h-1.5 bg-red-500 rounded-full mr-1.5"></div>Error`; }
         };
 
         onAuthStateChanged(auth, (user) => {
@@ -158,20 +184,45 @@
                 document.getElementById('admin-status').innerHTML = `<div class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></div>Online`;
                 loadAdminOrders();
                 loadAdminMenu();
-            } else {
-                adminUser = null;
-            }
+                loadSettingsData();
+            } else { adminUser = null; }
         });
 
-        // --- MANAJEMEN PESANAN ---
-        window.loadAdminOrders = () => {
+        // --- PENGATURAN ---
+        const loadSettingsData = async () => {
+            if (!adminUser) return;
+            const docRef = doc(db, 'artifacts', sysAppId, 'public', 'data', 'settings', 'store_settings');
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                document.getElementById('set-wa').value = data.whatsapp || '';
+                document.getElementById('set-loc').value = data.lokasi || '';
+                document.getElementById('set-qr').value = data.qrCode || '';
+            }
+        };
+
+        window.saveSettings = async () => {
+            if (!adminUser) return;
+            const wa = document.getElementById('set-wa').value.trim();
+            const loc = document.getElementById('set-loc').value.trim();
+            const qr = document.getElementById('set-qr').value.trim();
+
+            try {
+                const docRef = doc(db, 'artifacts', sysAppId, 'public', 'data', 'settings', 'store_settings');
+                await setDoc(docRef, { whatsapp: wa, lokasi: loc, qrCode: qr }, { merge: true });
+                showToast("Pengaturan berhasil disimpan!");
+            } catch (error) {
+                showToast("Gagal menyimpan pengaturan.");
+            }
+        };
+
+        // --- PESANAN ---
+        const loadAdminOrders = () => {
             if (!adminUser) return;
             const ordersRef = collection(db, 'artifacts', sysAppId, 'public', 'data', 'orders');
-            
             onSnapshot(ordersRef, (snapshot) => {
                 allOrders = [];
                 snapshot.forEach(doc => allOrders.push({ id: doc.id, ...doc.data() }));
-                // Urutkan: Menunggu & Diproses di atas, lalu berdasarkan waktu terbaru
                 allOrders.sort((a, b) => {
                     if (a.status === 'Menunggu' && b.status !== 'Menunggu') return -1;
                     if (a.status !== 'Menunggu' && b.status === 'Menunggu') return 1;
@@ -184,7 +235,7 @@
         const renderAdminOrders = () => {
             const list = document.getElementById('admin-orders-list');
             if (allOrders.length === 0) {
-                list.innerHTML = `<div class="text-center py-20 text-gray-400">Belum ada pesanan masuk.</div>`;
+                list.innerHTML = `<div class="text-center py-20 text-gray-400">Belum ada pesanan.</div>`;
                 return;
             }
 
@@ -193,38 +244,41 @@
                 const d = new Date(order.waktu);
                 const timeStr = d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
                 
-                let actionBtn = '';
                 let bgStyle = 'bg-white border-gray-100';
-                
-                if (order.status === 'Menunggu') {
-                    bgStyle = 'bg-amber-50/50 border-amber-100';
-                    actionBtn = `<button onclick="updateOrderStatus('${order.id}', 'Diproses')" class="w-full mt-3 bg-blue-500 active:bg-blue-600 text-white text-[15px] py-2.5 rounded-xl font-semibold transition-colors">Proses Pesanan</button>`;
-                } else if (order.status === 'Diproses') {
-                    bgStyle = 'bg-blue-50/50 border-blue-100';
-                    actionBtn = `<button onclick="updateOrderStatus('${order.id}', 'Siap Diambil')" class="w-full mt-3 bg-green-500 active:bg-green-600 text-white text-[15px] py-2.5 rounded-xl font-semibold transition-colors">Siap Diambil</button>`;
-                } else if (order.status === 'Siap Diambil') {
-                    bgStyle = 'bg-green-50/50 border-green-100';
-                    actionBtn = `<button onclick="updateOrderStatus('${order.id}', 'Selesai')" class="w-full mt-3 bg-gray-800 active:bg-gray-900 text-white text-[15px] py-2.5 rounded-xl font-semibold transition-colors">Selesaikan</button>`;
-                } else {
-                    bgStyle = 'bg-gray-50 border-gray-100 opacity-70';
-                    actionBtn = ``;
-                }
+                if (order.status === 'Menunggu') bgStyle = 'bg-amber-50/50 border-amber-100';
+                else if (order.status === 'Diproses') bgStyle = 'bg-blue-50/50 border-blue-100';
+                else if (order.status === 'Siap Diambil') bgStyle = 'bg-green-50/50 border-green-100';
+                else bgStyle = 'bg-gray-50 border-gray-100 opacity-75';
 
-                const itemsHtml = order.items.map(i => `<div class="flex justify-between text-[15px] mb-1 text-gray-800"><span class="font-medium">${i.qty}x ${i.nama}</span></div>`).join('');
+                const itemsHtml = order.items.map(i => `<div class="text-[14px] text-gray-800 mb-0.5"><span class="font-semibold">${i.qty}x</span> ${i.nama}</div>`).join('');
+
+                const selStatus = `
+                    <select onchange="updateOrderStatus('${order.id}', this.value)" class="w-full mt-3 bg-white border border-gray-200 text-[14px] p-2.5 rounded-xl font-medium focus:outline-none focus:ring-1 focus:ring-amber-500 shadow-sm">
+                        <option value="Menunggu" ${order.status === 'Menunggu' ? 'selected' : ''}>⏳ Menunggu Konfirmasi</option>
+                        <option value="Diproses" ${order.status === 'Diproses' ? 'selected' : ''}>👨‍🍳 Sedang Diproses</option>
+                        <option value="Siap Diambil" ${order.status === 'Siap Diambil' ? 'selected' : ''}>🛍️ Siap Diambil</option>
+                        <option value="Selesai" ${order.status === 'Selesai' ? 'selected' : ''}>✅ Pesanan Selesai</option>
+                    </select>
+                `;
 
                 const el = document.createElement('div');
                 el.className = `p-4 rounded-[20px] shadow-sm border ${bgStyle} transition-all`;
                 el.innerHTML = `
-                    <div class="flex justify-between items-center mb-3 border-b border-black/5 pb-2">
-                        <span class="text-[13px] text-gray-500 font-medium">#${order.id.slice(0,6).toUpperCase()} • ${timeStr}</span>
+                    <div class="flex justify-between items-start mb-3 border-b border-black/5 pb-2">
+                        <div>
+                            <div class="text-[13px] text-gray-500 font-medium">#${order.id.slice(0,6).toUpperCase()} • ${timeStr}</div>
+                            <div class="text-[15px] font-bold text-gray-900 mt-1">${order.namaCustomer || 'Tanpa Nama'}</div>
+                            ${order.whatsappCustomer ? `<div class="text-[12px] text-green-600 font-medium"><i data-lucide="phone" class="w-3 h-3 inline"></i> ${order.whatsappCustomer}</div>` : ''}
+                        </div>
                         <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-white shadow-sm">${order.status}</span>
                     </div>
                     <div class="mb-3">${itemsHtml}</div>
-                    <div class="flex justify-between items-center mt-2 font-semibold">
-                        <span class="text-[15px]">Total</span>
+                    ${order.catatan ? `<div class="bg-gray-100/50 p-2 rounded-lg text-[12px] text-gray-600 mb-3 italic">" ${order.catatan} "</div>` : ''}
+                    <div class="flex justify-between items-center font-bold">
+                        <span class="text-[14px]">Total</span>
                         <span class="text-amber-600 text-[15px]">${formatIDR(order.total)}</span>
                     </div>
-                    ${actionBtn}
+                    ${selStatus}
                 `;
                 list.appendChild(el);
             });
@@ -236,14 +290,13 @@
             try {
                 const docRef = doc(db, 'artifacts', sysAppId, 'public', 'data', 'orders', orderId);
                 await updateDoc(docRef, { status: newStatus });
-                showToast(`Status diubah: ${newStatus}`);
+                showToast(`Status: ${newStatus}`);
             } catch (error) {
-                console.error("Gagal update status:", error);
-                showToast("Gagal merubah status pesanan!");
+                showToast("Gagal update status!");
             }
         };
 
-        // --- MANAJEMEN MENU ---
+        // --- MENU ---
         const loadAdminMenu = () => {
             if (!adminUser) return;
             const menuRef = collection(db, 'artifacts', sysAppId, 'public', 'data', 'menu');
@@ -257,20 +310,23 @@
         const renderAdminMenu = () => {
             const list = document.getElementById('admin-menu-list');
             if (allMenu.length === 0) {
-                list.innerHTML = `<div class="text-center py-8 text-gray-400 text-[15px]">Menu masih kosong.</div>`;
+                list.innerHTML = `<div class="text-center py-8 text-gray-400 text-[14px]">Menu kosong.</div>`;
                 return;
             }
 
             list.innerHTML = '';
             allMenu.forEach(item => {
+                const img = item.image || 'https://placehold.co/100x100/eee/999?text=X';
+                
                 const el = document.createElement('div');
-                el.className = "flex items-center justify-between p-4 bg-white active:bg-gray-50 transition-colors";
+                el.className = "flex items-center p-4 bg-white active:bg-gray-50 transition-colors";
                 el.innerHTML = `
-                    <div class="flex-1">
-                        <div class="font-semibold text-gray-900 text-[16px]">${item.nama}</div>
-                        <div class="text-amber-600 text-[14px] mt-0.5">${formatIDR(item.harga)}</div>
+                    <img src="${img}" class="w-12 h-12 rounded-lg object-cover bg-gray-100 border border-gray-200 mr-3">
+                    <div class="flex-1 pr-2">
+                        <div class="font-semibold text-gray-900 text-[15px]">${item.nama}</div>
+                        <div class="text-amber-600 text-[13px] font-medium">${item.hargaPromo ? `<span class="line-through text-gray-400 text-[11px] mr-1">${formatIDR(item.harga)}</span>` : ''}${formatIDR(item.hargaPromo || item.harga)}</div>
                     </div>
-                    <button onclick="deleteMenuItem('${item.id}')" class="text-red-500 active:opacity-50 p-2 transition-opacity">
+                    <button onclick="deleteMenuItem('${item.id}')" class="text-red-500 active:opacity-50 p-2">
                         <i data-lucide="trash-2" class="w-5 h-5"></i>
                     </button>
                 `;
@@ -281,14 +337,15 @@
 
         window.addMenuItem = async () => {
             if (!adminUser) return;
-            const namaInput = document.getElementById('add-nama');
-            const hargaInput = document.getElementById('add-harga');
-            
-            const nama = namaInput.value.trim();
-            const harga = parseInt(hargaInput.value);
+            const nama = document.getElementById('add-nama').value.trim();
+            const harga = parseInt(document.getElementById('add-harga').value);
+            const promo = parseInt(document.getElementById('add-promo').value) || 0;
+            const comp = document.getElementById('add-comp').value.trim();
+            const desc = document.getElementById('add-desc').value.trim();
+            const img = document.getElementById('add-img').value.trim();
 
             if (!nama || !harga || isNaN(harga)) {
-                showToast("Nama dan harga valid harus diisi!");
+                showToast("Nama dan Harga (Rp) wajib diisi!");
                 return;
             }
 
@@ -297,11 +354,13 @@
                 await addDoc(menuRef, {
                     nama: nama,
                     harga: harga,
-                    deskripsi: "Kopi spesial Ay&"
+                    hargaPromo: promo,
+                    komposisi: comp,
+                    catatan: desc,
+                    image: img
                 });
                 
-                namaInput.value = '';
-                hargaInput.value = '';
+                ['add-nama','add-harga','add-promo','add-comp','add-desc','add-img'].forEach(id => document.getElementById(id).value = '');
                 showToast("Menu berhasil ditambahkan!");
             } catch (error) {
                 showToast("Gagal menambah menu.");
@@ -310,18 +369,16 @@
 
         window.deleteMenuItem = async (menuId) => {
             if (!adminUser) return;
-            // Gunakan custom modal konfirmasi via JS logic atau langsung delete
             try {
                 const docRef = doc(db, 'artifacts', sysAppId, 'public', 'data', 'menu', menuId);
                 await deleteDoc(docRef);
-                showToast("Menu berhasil dihapus!");
+                showToast("Menu dihapus.");
             } catch (error) {
-                showToast("Gagal menghapus menu.");
+                showToast("Gagal menghapus.");
             }
         };
 
         initAuth();
-
     </script>
 </body>
 </html>
