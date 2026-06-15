@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Ay& Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+        body { -ms-overflow-style: none; scrollbar-width: none; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f2f2f7; }
+        .app-container { max-width: 480px; margin: 0 auto; background-color: #f2f2f7; min-height: 100vh; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+        .pt-safe { padding-top: env(safe-area-inset-top); }
+        .pb-safe { padding-bottom: calc(env(safe-area-inset-bottom) + 85px); }
+        .ios-blur { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+        .toast { transition: opacity 0.3s ease, transform 0.3s ease; }
+    </style>
+</head>
+<body class="text-gray-900 antialiased selection:bg-amber-200">
+
+    <div class="app-container flex flex-col h-screen overflow-hidden">
+        
+        <!-- Header (iOS Style) -->
+        <header class="ios-blur pt-safe border-b border-gray-200/50 sticky top-0 z-30 px-4 py-3 flex justify-between items-center">
+            <div class="text-[10px] bg-gray-200/80 text-gray-600 px-2 py-1 rounded-md font-medium flex items-center" id="admin-status">
+                <div class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-1.5 animate-pulse"></div>Offline
+            </div>
+            <h1 class="text-[17px] font-semibold tracking-tight text-black absolute left-1/2 transform -translate-x-1/2">Admin</h1>
+            <div class="w-[60px]"></div> <!-- Spacer -->
+        </header>
+
+        <main class="flex-1 overflow-y-auto pb-safe relative px-4 pt-4">
+            
+            <!-- Toast UI -->
+            <div id="admin-toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 ios-blur border border-gray-200/50 text-gray-800 px-5 py-2.5 rounded-full shadow-lg transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center text-[14px] font-medium whitespace-nowrap">
+                <span id="toast-msg">Notifikasi</span>
+            </div>
+
+            <!-- VIEW: KELOLA PESANAN -->
+            <section id="view-orders" class="block w-full">
+                <div class="flex justify-between items-end mb-4 px-1">
+                    <h2 class="text-[28px] font-bold tracking-tight text-black">Pesanan</h2>
+                    <button onclick="loadAdminOrders()" class="text-amber-600 mb-1.5 active:opacity-50 transition-opacity"><i data-lucide="rotate-cw" class="w-5 h-5"></i></button>
+                </div>
+                
+                <div id="admin-orders-list" class="space-y-4">
+                    <div class="text-center py-10 text-gray-400"><i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto mb-2"></i> Memuat data...</div>
+                </div>
+            </section>
+
+            <!-- VIEW: KELOLA MENU -->
+            <section id="view-menu" class="hidden w-full">
+                <div class="mb-4 px-1">
+                    <h2 class="text-[28px] font-bold tracking-tight text-black">Menu Kopi</h2>
+                </div>
+
+                <!-- Form Tambah Menu -->
+                <div class="bg-white p-4 rounded-[20px] mb-6 shadow-sm border border-gray-100">
+                    <h3 class="font-semibold text-gray-900 text-[15px] mb-3">Tambah Baru</h3>
+                    <div class="space-y-3">
+                        <input type="text" id="add-nama" placeholder="Nama Kopi" class="w-full bg-gray-100/50 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 text-[15px]">
+                        <input type="number" id="add-harga" placeholder="Harga (Rp)" class="w-full bg-gray-100/50 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 text-[15px]">
+                        <button onclick="addMenuItem()" class="w-full bg-amber-600 active:bg-amber-700 text-white font-semibold py-3 rounded-xl transition-colors text-[15px]">
+                            Simpan Menu
+                        </button>
+                    </div>
+                </div>
+
+                <!-- List Menu -->
+                <h3 class="font-semibold text-gray-500 text-[13px] uppercase tracking-wider mb-2 px-2">Daftar Item</h3>
+                <div class="bg-white rounded-[20px] shadow-sm border border-gray-100 overflow-hidden mb-6">
+                    <div id="admin-menu-list" class="divide-y divide-gray-100">
+                        <!-- Menu list inserted here -->
+                        <div class="text-center py-6 text-gray-400">Memuat...</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="ios-blur border-t border-gray-200/50 fixed bottom-0 w-full max-w-[480px] pb-[calc(env(safe-area-inset-bottom)+10px)] z-20 flex justify-around items-center pt-2 px-2 shadow-none rounded-none">
+            <button onclick="switchAdminTab('orders')" id="tab-orders" class="flex flex-col items-center p-2 text-amber-600 transition-colors w-1/2">
+                <i data-lucide="bell" class="w-6 h-6 mb-1 stroke-[1.5]"></i>
+                <span class="text-[10px] font-medium tracking-wide">Pesanan</span>
+            </button>
+            <button onclick="switchAdminTab('menu')" id="tab-menu" class="flex flex-col items-center p-2 text-gray-400 hover:text-amber-600 transition-colors w-1/2">
+                <i data-lucide="layout-grid" class="w-6 h-6 mb-1 stroke-[1.5]"></i>
+                <span class="text-[10px] font-medium tracking-wide">Menu</span>
+            </button>
+        </nav>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBBLCeuWhOiOCPV7lWfbW4eSsjwbUmb3c8",
+            authDomain: "aplikasi-coffee.firebaseapp.com",
+            projectId: "aplikasi-coffee",
+            storageBucket: "aplikasi-coffee.firebasestorage.app",
+            messagingSenderId: "847017187499",
+            appId: "1:847017187499:web:f180c9da28725d50f6ffee"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        // Gunakan ID statis yang sama dengan aplikasi kustomer
+        const sysAppId = 'ay-coffee-shared-db';
+        let adminUser = null;
+        let allOrders = [];
+        let allMenu = [];
+
+        lucide.createIcons();
+
+        // Utils
+        const formatIDR = (num) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
+        
+        const showToast = (msg) => {
+            const t = document.getElementById('admin-toast');
+            document.getElementById('toast-msg').textContent = msg;
+            t.style.opacity = '1';
+            t.style.transform = 'translate(-50%, 10px)';
+            setTimeout(() => { 
+                t.style.opacity = '0';
+                t.style.transform = 'translate(-50%, 0)'; 
+            }, 3000);
+        };
+
+        window.switchAdminTab = (tab) => {
+            document.getElementById('view-orders').classList.add('hidden');
+            document.getElementById('view-menu').classList.add('hidden');
+            document.getElementById('tab-orders').className = "flex flex-col items-center p-2 text-gray-400 hover:text-amber-600 transition-colors w-1/2";
+            document.getElementById('tab-menu').className = "flex flex-col items-center p-2 text-gray-400 hover:text-amber-600 transition-colors w-1/2";
+            
+            document.getElementById(`view-${tab}`).classList.remove('hidden');
+            document.getElementById(`tab-${tab}`).className = "flex flex-col items-center p-2 text-amber-600 transition-colors w-1/2";
+        };
+
+        // Auth
+        const initAuth = async () => {
+            try {
+                await signInAnonymously(auth);
+            } catch (err) {
+                document.getElementById('admin-status').textContent = "Error Koneksi";
+                document.getElementById('admin-status').classList.add('bg-red-900', 'text-red-200');
+            }
+        };
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                adminUser = user;
+                document.getElementById('admin-status').innerHTML = `<div class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></div>Online`;
+                loadAdminOrders();
+                loadAdminMenu();
+            } else {
+                adminUser = null;
+            }
+        });
+
+        // --- MANAJEMEN PESANAN ---
+        window.loadAdminOrders = () => {
+            if (!adminUser) return;
+            const ordersRef = collection(db, 'artifacts', sysAppId, 'public', 'data', 'orders');
+            
+            onSnapshot(ordersRef, (snapshot) => {
+                allOrders = [];
+                snapshot.forEach(doc => allOrders.push({ id: doc.id, ...doc.data() }));
+                // Urutkan: Menunggu & Diproses di atas, lalu berdasarkan waktu terbaru
+                allOrders.sort((a, b) => {
+                    if (a.status === 'Menunggu' && b.status !== 'Menunggu') return -1;
+                    if (a.status !== 'Menunggu' && b.status === 'Menunggu') return 1;
+                    return new Date(b.waktu) - new Date(a.waktu);
+                });
+                renderAdminOrders();
+            });
+        };
+
+        const renderAdminOrders = () => {
+            const list = document.getElementById('admin-orders-list');
+            if (allOrders.length === 0) {
+                list.innerHTML = `<div class="text-center py-20 text-gray-400">Belum ada pesanan masuk.</div>`;
+                return;
+            }
+
+            list.innerHTML = '';
+            allOrders.forEach(order => {
+                const d = new Date(order.waktu);
+                const timeStr = d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                
+                let actionBtn = '';
+                let bgStyle = 'bg-white border-gray-100';
+                
+                if (order.status === 'Menunggu') {
+                    bgStyle = 'bg-amber-50/50 border-amber-100';
+                    actionBtn = `<button onclick="updateOrderStatus('${order.id}', 'Diproses')" class="w-full mt-3 bg-blue-500 active:bg-blue-600 text-white text-[15px] py-2.5 rounded-xl font-semibold transition-colors">Proses Pesanan</button>`;
+                } else if (order.status === 'Diproses') {
+                    bgStyle = 'bg-blue-50/50 border-blue-100';
+                    actionBtn = `<button onclick="updateOrderStatus('${order.id}', 'Siap Diambil')" class="w-full mt-3 bg-green-500 active:bg-green-600 text-white text-[15px] py-2.5 rounded-xl font-semibold transition-colors">Siap Diambil</button>`;
+                } else if (order.status === 'Siap Diambil') {
+                    bgStyle = 'bg-green-50/50 border-green-100';
+                    actionBtn = `<button onclick="updateOrderStatus('${order.id}', 'Selesai')" class="w-full mt-3 bg-gray-800 active:bg-gray-900 text-white text-[15px] py-2.5 rounded-xl font-semibold transition-colors">Selesaikan</button>`;
+                } else {
+                    bgStyle = 'bg-gray-50 border-gray-100 opacity-70';
+                    actionBtn = ``;
+                }
+
+                const itemsHtml = order.items.map(i => `<div class="flex justify-between text-[15px] mb-1 text-gray-800"><span class="font-medium">${i.qty}x ${i.nama}</span></div>`).join('');
+
+                const el = document.createElement('div');
+                el.className = `p-4 rounded-[20px] shadow-sm border ${bgStyle} transition-all`;
+                el.innerHTML = `
+                    <div class="flex justify-between items-center mb-3 border-b border-black/5 pb-2">
+                        <span class="text-[13px] text-gray-500 font-medium">#${order.id.slice(0,6).toUpperCase()} • ${timeStr}</span>
+                        <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-white shadow-sm">${order.status}</span>
+                    </div>
+                    <div class="mb-3">${itemsHtml}</div>
+                    <div class="flex justify-between items-center mt-2 font-semibold">
+                        <span class="text-[15px]">Total</span>
+                        <span class="text-amber-600 text-[15px]">${formatIDR(order.total)}</span>
+                    </div>
+                    ${actionBtn}
+                `;
+                list.appendChild(el);
+            });
+            lucide.createIcons();
+        };
+
+        window.updateOrderStatus = async (orderId, newStatus) => {
+            if (!adminUser) return;
+            try {
+                const docRef = doc(db, 'artifacts', sysAppId, 'public', 'data', 'orders', orderId);
+                await updateDoc(docRef, { status: newStatus });
+                showToast(`Status diubah: ${newStatus}`);
+            } catch (error) {
+                console.error("Gagal update status:", error);
+                showToast("Gagal merubah status pesanan!");
+            }
+        };
+
+        // --- MANAJEMEN MENU ---
+        const loadAdminMenu = () => {
+            if (!adminUser) return;
+            const menuRef = collection(db, 'artifacts', sysAppId, 'public', 'data', 'menu');
+            onSnapshot(menuRef, (snapshot) => {
+                allMenu = [];
+                snapshot.forEach(doc => allMenu.push({ id: doc.id, ...doc.data() }));
+                renderAdminMenu();
+            });
+        };
+
+        const renderAdminMenu = () => {
+            const list = document.getElementById('admin-menu-list');
+            if (allMenu.length === 0) {
+                list.innerHTML = `<div class="text-center py-8 text-gray-400 text-[15px]">Menu masih kosong.</div>`;
+                return;
+            }
+
+            list.innerHTML = '';
+            allMenu.forEach(item => {
+                const el = document.createElement('div');
+                el.className = "flex items-center justify-between p-4 bg-white active:bg-gray-50 transition-colors";
+                el.innerHTML = `
+                    <div class="flex-1">
+                        <div class="font-semibold text-gray-900 text-[16px]">${item.nama}</div>
+                        <div class="text-amber-600 text-[14px] mt-0.5">${formatIDR(item.harga)}</div>
+                    </div>
+                    <button onclick="deleteMenuItem('${item.id}')" class="text-red-500 active:opacity-50 p-2 transition-opacity">
+                        <i data-lucide="trash-2" class="w-5 h-5"></i>
+                    </button>
+                `;
+                list.appendChild(el);
+            });
+            lucide.createIcons();
+        };
+
+        window.addMenuItem = async () => {
+            if (!adminUser) return;
+            const namaInput = document.getElementById('add-nama');
+            const hargaInput = document.getElementById('add-harga');
+            
+            const nama = namaInput.value.trim();
+            const harga = parseInt(hargaInput.value);
+
+            if (!nama || !harga || isNaN(harga)) {
+                showToast("Nama dan harga valid harus diisi!");
+                return;
+            }
+
+            try {
+                const menuRef = collection(db, 'artifacts', sysAppId, 'public', 'data', 'menu');
+                await addDoc(menuRef, {
+                    nama: nama,
+                    harga: harga,
+                    deskripsi: "Kopi spesial Ay&"
+                });
+                
+                namaInput.value = '';
+                hargaInput.value = '';
+                showToast("Menu berhasil ditambahkan!");
+            } catch (error) {
+                showToast("Gagal menambah menu.");
+            }
+        };
+
+        window.deleteMenuItem = async (menuId) => {
+            if (!adminUser) return;
+            // Gunakan custom modal konfirmasi via JS logic atau langsung delete
+            try {
+                const docRef = doc(db, 'artifacts', sysAppId, 'public', 'data', 'menu', menuId);
+                await deleteDoc(docRef);
+                showToast("Menu berhasil dihapus!");
+            } catch (error) {
+                showToast("Gagal menghapus menu.");
+            }
+        };
+
+        initAuth();
+
+    </script>
+</body>
+</html>
