@@ -54,7 +54,7 @@
                 </div>
 
                 <div class="bg-white p-4 rounded-[20px] mb-6 shadow-sm border border-gray-100">
-                    <h3 class="font-semibold text-gray-900 text-[15px] mb-3 border-b border-gray-100 pb-2">Tambah Baru</h3>
+                    <h3 class="font-semibold text-gray-900 text-[15px] mb-3 border-b border-gray-100 pb-2">Form Tambah / Edit</h3>
                     <div class="space-y-3">
                         <input type="text" id="add-img" placeholder="Link URL Gambar (opsional)" class="w-full bg-gray-50 p-3 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500 text-[14px]">
                         <input type="text" id="add-nama" placeholder="Nama Kopi*" class="w-full bg-gray-50 p-3 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500 text-[14px]">
@@ -65,9 +65,12 @@
                         <input type="text" id="add-comp" placeholder="Komposisi Kopi (opsional)" class="w-full bg-gray-50 p-3 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500 text-[14px]">
                         <textarea id="add-desc" placeholder="Catatan/Penjelasan (opsional)" class="w-full bg-gray-50 p-3 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500 text-[14px]" rows="2"></textarea>
                         
-                        <button onclick="addMenuItem()" class="w-full bg-amber-600 active:bg-amber-700 text-white font-semibold py-3 rounded-xl transition-colors text-[15px] mt-2">
-                            Simpan Menu
-                        </button>
+                        <div class="flex gap-2 mt-2">
+                            <button id="btn-cancel-edit" onclick="cancelEditMenu()" class="hidden w-1/3 bg-gray-200 active:bg-gray-300 text-gray-700 font-semibold py-3 rounded-xl transition-colors text-[15px]">Batal</button>
+                            <button id="btn-save-menu" onclick="addMenuItem()" class="flex-1 bg-amber-600 active:bg-amber-700 text-white font-semibold py-3 rounded-xl transition-colors text-[15px]">
+                                Simpan Menu
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -86,20 +89,27 @@
                 </div>
 
                 <div class="bg-white p-4 rounded-[20px] mb-6 shadow-sm border border-gray-100">
-                    <h3 class="font-semibold text-gray-900 text-[15px] mb-3 border-b border-gray-100 pb-2 flex items-center"><i data-lucide="store" class="w-4 h-4 mr-1.5"></i> Profil Toko</h3>
+                    <h3 class="font-semibold text-gray-900 text-[15px] mb-3 border-b border-gray-100 pb-2 flex items-center"><i data-lucide="store" class="w-4 h-4 mr-1.5"></i> Profil & Pembayaran</h3>
                     <div class="space-y-4">
                         <div>
                             <label class="block text-[12px] font-semibold text-gray-500 mb-1">Nomor WhatsApp Admin</label>
                             <input type="tel" id="set-wa" placeholder="Contoh: 0812345678" class="w-full bg-gray-50 p-3 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500 text-[14px]">
-                            <p class="text-[11px] text-gray-400 mt-1">Gunakan format 08.. atau 628.. untuk menerima pesanan.</p>
                         </div>
                         <div>
-                            <label class="block text-[12px] font-semibold text-gray-500 mb-1">Link Google Maps Lokasi Gerai</label>
+                            <label class="block text-[12px] font-semibold text-gray-500 mb-1">Link URL Google Maps (Lokasi Toko)</label>
                             <input type="url" id="set-loc" placeholder="https://maps.app.goo.gl/..." class="w-full bg-gray-50 p-3 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500 text-[14px]">
                         </div>
                         <div>
                             <label class="block text-[12px] font-semibold text-gray-500 mb-1">Link URL Gambar QRIS</label>
                             <input type="url" id="set-qr" placeholder="https://..." class="w-full bg-gray-50 p-3 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500 text-[14px]">
+                        </div>
+                        <div class="pt-2 border-t border-gray-100">
+                            <label class="block text-[12px] font-semibold text-gray-500 mb-1">Nama Bank (Untuk Transfer)</label>
+                            <input type="text" id="set-bank" placeholder="Contoh: BCA / Mandiri / GoPay" class="w-full bg-gray-50 p-3 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500 text-[14px]">
+                        </div>
+                        <div>
+                            <label class="block text-[12px] font-semibold text-gray-500 mb-1">Nomor Rekening / No E-Wallet</label>
+                            <input type="number" id="set-rek" placeholder="Contoh: 1234567890" class="w-full bg-gray-50 p-3 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500 text-[14px]">
                         </div>
                         <button onclick="saveSettings()" class="w-full bg-gray-800 active:bg-black text-white font-semibold py-3 rounded-xl transition-colors text-[15px] mt-2">
                             Simpan Pengaturan
@@ -149,6 +159,7 @@
         let adminUser = null;
         let allOrders = [];
         let allMenu = [];
+        let editMenuId = null; // Menyimpan ID menu jika sedang dalam mode edit
 
         lucide.createIcons();
         const formatIDR = (num) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
@@ -198,6 +209,8 @@
                 document.getElementById('set-wa').value = data.whatsapp || '';
                 document.getElementById('set-loc').value = data.lokasi || '';
                 document.getElementById('set-qr').value = data.qrCode || '';
+                document.getElementById('set-bank').value = data.bank || '';
+                document.getElementById('set-rek').value = data.rekening || '';
             }
         };
 
@@ -206,10 +219,12 @@
             const wa = document.getElementById('set-wa').value.trim();
             const loc = document.getElementById('set-loc').value.trim();
             const qr = document.getElementById('set-qr').value.trim();
+            const bank = document.getElementById('set-bank').value.trim();
+            const rek = document.getElementById('set-rek').value.trim();
 
             try {
                 const docRef = doc(db, 'artifacts', sysAppId, 'public', 'data', 'settings', 'store_settings');
-                await setDoc(docRef, { whatsapp: wa, lokasi: loc, qrCode: qr }, { merge: true });
+                await setDoc(docRef, { whatsapp: wa, lokasi: loc, qrCode: qr, bank: bank, rekening: rek }, { merge: true });
                 showToast("Pengaturan berhasil disimpan!");
             } catch (error) {
                 showToast("Gagal menyimpan pengaturan.");
@@ -325,6 +340,9 @@
                         <div class="font-semibold text-gray-900 text-[15px]">${item.nama}</div>
                         <div class="text-amber-600 text-[13px] font-medium">${item.hargaPromo ? `<span class="line-through text-gray-400 text-[11px] mr-1">${formatIDR(item.harga)}</span>` : ''}${formatIDR(item.hargaPromo || item.harga)}</div>
                     </div>
+                    <button onclick="editMenuItem('${item.id}')" class="text-blue-500 active:opacity-50 p-2 mr-1">
+                        <i data-lucide="pencil" class="w-5 h-5"></i>
+                    </button>
                     <button onclick="deleteMenuItem('${item.id}')" class="text-red-500 active:opacity-50 p-2">
                         <i data-lucide="trash-2" class="w-5 h-5"></i>
                     </button>
@@ -332,6 +350,34 @@
                 list.appendChild(el);
             });
             lucide.createIcons();
+        };
+
+        window.editMenuItem = (id) => {
+            const item = allMenu.find(i => i.id === id);
+            if(!item) return;
+            editMenuId = id;
+            document.getElementById('add-nama').value = item.nama || '';
+            document.getElementById('add-harga').value = item.harga || '';
+            document.getElementById('add-promo').value = item.hargaPromo || '';
+            document.getElementById('add-comp').value = item.komposisi || '';
+            document.getElementById('add-desc').value = item.catatan || '';
+            document.getElementById('add-img').value = item.image || '';
+            
+            document.getElementById('btn-save-menu').textContent = 'Update Menu';
+            document.getElementById('btn-save-menu').classList.replace('bg-amber-600', 'bg-blue-600');
+            document.getElementById('btn-save-menu').classList.replace('active:bg-amber-700', 'active:bg-blue-700');
+            document.getElementById('btn-cancel-edit').classList.remove('hidden');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.cancelEditMenu = () => {
+            editMenuId = null;
+            ['add-nama','add-harga','add-promo','add-comp','add-desc','add-img'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('btn-save-menu').textContent = 'Simpan Menu';
+            document.getElementById('btn-save-menu').classList.replace('bg-blue-600', 'bg-amber-600');
+            document.getElementById('btn-save-menu').classList.replace('active:bg-blue-700', 'active:bg-amber-700');
+            document.getElementById('btn-cancel-edit').classList.add('hidden');
         };
 
         window.addMenuItem = async () => {
@@ -349,20 +395,19 @@
             }
 
             try {
-                const menuRef = collection(db, 'artifacts', sysAppId, 'public', 'data', 'menu');
-                await addDoc(menuRef, {
-                    nama: nama,
-                    harga: harga,
-                    hargaPromo: promo,
-                    komposisi: comp,
-                    catatan: desc,
-                    image: img
-                });
-                
-                ['add-nama','add-harga','add-promo','add-comp','add-desc','add-img'].forEach(id => document.getElementById(id).value = '');
-                showToast("Menu berhasil ditambahkan!");
+                if(editMenuId) {
+                    const docRef = doc(db, 'artifacts', sysAppId, 'public', 'data', 'menu', editMenuId);
+                    await updateDoc(docRef, { nama, harga, hargaPromo: promo, komposisi: comp, catatan: desc, image: img });
+                    showToast("Menu berhasil diupdate!");
+                    cancelEditMenu();
+                } else {
+                    const menuRef = collection(db, 'artifacts', sysAppId, 'public', 'data', 'menu');
+                    await addDoc(menuRef, { nama, harga, hargaPromo: promo, komposisi: comp, catatan: desc, image: img });
+                    showToast("Menu berhasil ditambahkan!");
+                    cancelEditMenu();
+                }
             } catch (error) {
-                showToast("Gagal menambah menu.");
+                showToast("Gagal menyimpan menu.");
             }
         };
 
